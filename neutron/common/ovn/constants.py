@@ -281,6 +281,8 @@ HA_CHASSIS_GROUP_HIGHEST_PRIORITY = 32767
 # OVN igmp options
 MCAST_SNOOP = 'mcast_snoop'
 MCAST_FLOOD_UNREGISTERED = 'mcast_flood_unregistered'
+MCAST_FLOOD_REPORTS = 'mcast_flood_reports'
+MCAST_FLOOD_PORT = 'mcast_flood'
 
 EXTERNAL_PORT_TYPES = (portbindings.VNIC_DIRECT,
                        portbindings.VNIC_DIRECT_PHYSICAL,

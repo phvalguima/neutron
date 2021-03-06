@@ -298,6 +298,10 @@ class OVNClient(object):
             options.update({'requested-chassis':
                             port.get(portbindings.HOST_ID, '')})
 
+        rp = ('true' if ovn_conf.is_mcast_igmp_flooding_report_enabled()
+              else 'false')
+        options[ovn_const.MCAST_FLOOD_REPORTS] = rp
+
         device_owner = port.get('device_owner', '')
         sg_ids = ' '.join(utils.get_lsp_security_groups(port))
         return OvnPortInfo(port_type, options, addresses, port_security,
@@ -1541,7 +1545,8 @@ class OVNClient(object):
             external_ids={},
             type=ovn_const.LSP_TYPE_LOCALNET,
             tag=tag,
-            options={'network_name': physnet})
+            options={'network_name': physnet,
+                     ovn_const.MCAST_FLOOD_PORT: 'true'})
         self._transaction([cmd], txn=txn)
 
     def delete_provnet_port(self, network_id, segment):

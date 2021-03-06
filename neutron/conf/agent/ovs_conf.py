@@ -44,6 +44,14 @@ OPTS = [
                        'unregistered multicast packets to all ports. '
                        'The switch will send unregistered multicast packets '
                        'only to ports connected to multicast routers.')),
+    cfg.BoolOpt('mcast_igmp_flooding_report_enable', default=True,
+                help=_('If IGMP snooping is enabled, set to True to allow '
+                       'flooding of IGMP messages only while unregistered '
+                       'multicast packets will be disabled.'
+                       'This setting is gated by igmp_snooping_enable and '
+                       'defaults to True so IGMP messages can flow freely '
+                       'even if snooping is configured.')),
+
 ]
 
 

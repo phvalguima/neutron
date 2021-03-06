@@ -559,6 +559,7 @@ class DBInconsistenciesPeriodics(SchemaAwarePeriodicsBase):
         with self._nb_idl.transaction(check_error=True) as txn:
             value = ('true' if ovn_conf.is_igmp_snooping_enabled()
                      else 'false')
+
             for ls in self._nb_idl.ls_list().execute(check_error=True):
                 if (ls.other_config.get(ovn_const.MCAST_SNOOP,
                                         None) == value or not ls.name):
@@ -568,6 +569,27 @@ class DBInconsistenciesPeriodics(SchemaAwarePeriodicsBase):
                     ('other_config', {
                         ovn_const.MCAST_SNOOP: value,
                         ovn_const.MCAST_FLOOD_UNREGISTERED: 'false'})))
+
+        raise periodics.NeverAgain()
+
+    # A static spacing value is used here, but this method will only run
+    # once per lock due to the use of periodics.NeverAgain().
+    @periodics.periodic(spacing=600, run_immediately=True)
+    def check_for_igmp_flood_report(self):
+        if not self.has_lock:
+            return
+        rp = ('true' if ovn_conf.is_mcast_igmp_flooding_report_enabled()
+              else 'false')
+
+        with self._nb_idl.transaction(check_error=True) as txn:
+            for ls in self._nb_idl.ls_list().execute(check_error=True):
+                for lsp in ls.ports:
+                    if not lsp.name:
+                        continue
+                    txn.add(self._nb_idl.db_set(
+                        'Logical_Switch_Port', lsp.name,
+                        ('options', {
+                            ovn_const.MCAST_FLOOD_REPORTS: rp})))
 
         raise periodics.NeverAgain()
 

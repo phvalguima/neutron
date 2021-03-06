@@ -298,3 +298,9 @@ def is_ovn_emit_need_to_frag_enabled():
 
 def is_igmp_snooping_enabled():
     return cfg.CONF.OVS.igmp_snooping_enable
+
+
+def is_mcast_igmp_flooding_report_enabled():
+    if not cfg.CONF.OVS.igmp_snooping_enable:
+        return False
+    return cfg.CONF.OVS.mcast_igmp_flooding_report_enable
